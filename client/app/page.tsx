@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/functions/NavBar";
 import { useEffect, useState } from "react";
-import SparklesText from "@/components/ui/sparkles-text";
 import Particles from "@/components/ui/particles";
 import AnimatedBackground from "@/components/functions/AnimatedBackground";
 import WordPullUp from "@/components/ui/word-pull-up";
@@ -11,7 +10,6 @@ import InteractiveHoverButton from "@/components/ui/interactive-hover-button";
 import Link from "next/link";
 
 export default function LandingPage() {
-  const [color, setColor] = useState("#ffffff");
   const [isMounted, setIsMounted] = useState(false);
 
   // Ensure the component only renders client-side interactive elements after mounting
