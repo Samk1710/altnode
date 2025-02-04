@@ -34,9 +34,9 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="whitespace-pre-wrap bg-gradient-to-r from-[#F0F8FF] via-[#87CEEB] via-[#9370DB] to-[#FFB6C1] bg-clip-text text-center text-[7rem] font-bold leading-none text-transparent animate-gradient-fast dark:from-[#F0F8FF] dark:via-[#87CEEB] dark:via-[#9370DB] dark:to-[#FFB6C1] dark:via-[#F0F8FF] mb-2"
+          className="whitespace-pre-wrap bg-gradient-to-r from-[#F0F8FF] via-[#9370DB] to-[#FFB6C1] bg-clip-text text-center text-[7rem] font-bold leading-none text-transparent animate-gradient-fast dark:from-[#F0F8FF] dark:via-[#9370DB] dark:to-[#FFB6C1] mb-2"
         >
-          <h1 className="whitespace-pre-wrap bg-gradient-to-r dark:from-[#F0F8FF] dark:via-[#87CEEB] dark:via-[#9370DB] dark:to-[#FFB6C1] dark:via-[#F0F8FF] bg-clip-text text-transparent text-center text-3xl md:text-7xl lg:text-9xl font-bold relative z-20 leading-none animate-gradient-fast">
+          <h1 className="whitespace-pre-wrap bg-gradient-to-r dark:from-[#F0F8FF] dark:via-[#9370DB] dark:to-[#FFB6C1] bg-clip-text text-transparent text-center text-3xl md:text-7xl lg:text-9xl font-bold relative z-20 leading-none animate-gradient-fast">
             Al<i>t</i>node
           </h1>
         </motion.div>
