@@ -183,7 +183,7 @@ export const generateCode = async (
 
 Example input from the user:  
 
-- Prompt: "The pipeline should answer every question in pirate tongue."  
+- Prompt: "The agent should answer every question in pirate tongue."  
 - Input JSON example:  
   \`\`\`json
   {
@@ -225,7 +225,7 @@ import requests
 
 def generate(LLM: str, messages: list[dict[str, str]], params: dict=None) -> str:
     """
-    Generate text outputs using the pipeline
+    Generate text outputs using the agent pipeline
     """
     body = {
         "model": LLM,

@@ -65,7 +65,7 @@ import requests
 
 def generate(LLM: str, messages: list[dict[str, str]], params: dict=None) -> str:
     """
-    Generate text outputs using the pipeline
+    Generate text outputs using the agent pipeline
     """
     body = {
         "model": LLM,
@@ -88,23 +88,23 @@ def generate(LLM: str, messages: list[dict[str, str]], params: dict=None) -> str
     return json.dumps(response["choices"][0]["message"]["content"])
     
 """
-Utilise the run function to define your pipeline
+Utilise the run function to define your agent pipeline
 The LLM is available as a global variable called 'LLM' and can be used to generate text outputs using the 'generate' method
 The generate method is defined as follows: generate(LLM, messages: dict, params: dict) -> str
 LLM is globally defined so you can use it directly pass it as the first argument to the generate method
-The messages parameter is a list of dictionaries containing the input data for the pipeline
+The messages parameter is a list of dictionaries containing the input data for the agent pipeline
 Example: messages = [{"role": "system", "content": "This is a system prompt."}, {"role": "user", "content": "This is a user prompt."}]
-The params parameter is a dictionary containing the parameters for the pipeline
+The params parameter is a dictionary containing the parameters for the agent pipeline
 Example: params = {"temperature": 0.7, "max_tokens": 100}
 """
 
 def run(input_json, context=None):
     """
-    The 'run' function must always be defined in your code and should be the point of entry as well as output for your pipeline
+    The 'run' function must always be defined in your code and should be the point of entry as well as output for your agent pipeline
     The 'run' function should accept two parameters: input_json and context
-    input_json is a dictionary containing the input data for the pipeline
-    context is a string containing the context data for the pipeline
-    The 'run' function should return a dictionary containing the output data for the pipeline
+    input_json is a dictionary containing the input data for the agent pipeline
+    context is a string containing the context data for the agent pipeline
+    The 'run' function should return a dictionary containing the output data for the agent pipeline
     The output data should be in the form of a dictionary with the key 'output' and the value as the output text
     Example: return {"output": "Hello, World!"}
     """

@@ -32,9 +32,9 @@ export default function AboutPage() {
           <Card className="bg-gray-900/50 border-gray-800">
             <CardContent className="p-6">
               <Code className="w-12 h-12 mb-4 text-purple-400" />
-              <h3 className="text-xl font-semibold mb-2">AI Pipeline Developers</h3>
+              <h3 className="text-xl font-semibold mb-2">AI Agent Developers</h3>
               <ul className="space-y-2 text-gray-300">
-                <li>Create and deploy generative AI pipelines</li>
+                <li>Create and deploy generative AI Agents</li>
                 <li>Python-based IDE with modular tools</li>
                 <li>Configure LLMs through user-friendly GUI</li>
                 <li>Deploy on IPFS and mint as NFTs</li>
@@ -60,7 +60,7 @@ export default function AboutPage() {
               <Brain className="w-12 h-12 mb-4 text-coral-400" />
               <h3 className="text-xl font-semibold mb-2">AI Solution Builders</h3>
               <ul className="space-y-2 text-gray-300">
-                <li>Purchase pipeline and dataset NFTs</li>
+                <li>Purchase AI Agents and dataset NFTs</li>
                 <li>Access in-house LLMs</li>
                 <li>Create custom AI solutions</li>
                 <li>Build RAG systems</li>
