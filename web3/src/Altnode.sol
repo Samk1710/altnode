@@ -333,4 +333,23 @@ contract Altnode is ERC721URIStorage {
     ) external view returns (bytes32) {
         return subscriptions[assetId][subscriber].accessKey;
     }
+
+    /**
+     * @dev Get all active subscriptions for a subscriber
+     * @param subscriber The address of the subscriber
+     * @return activeSubscriptions The array of active subscriptions
+     */
+    function getAllActiveSubscriptionsByTokenId(uint256 assetId) external view returns (uint256[]) {
+        uint256[] memory activeSubscriptions = new uint256[](tokenId);
+        uint256 activeCount = 0;
+
+        for (uint256 i = 0; i <= tokenId; i++) {
+            if (subscriptions[assetId][msg.sender].validity > block.timestamp) {
+                activeSubscriptions[activeCount] = i;
+                activeCount++;
+            }
+        }
+
+        return activeSubscriptions;
+    }
 }
