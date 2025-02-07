@@ -335,21 +335,33 @@ contract Altnode is ERC721URIStorage {
     }
 
     /**
-     * @dev Get all active subscriptions for a subscriber
-     * @param subscriber The address of the subscriber
-     * @return activeSubscriptions The array of active subscriptions
+     * @dev Get all active subscribers for a given asset ID
+     * @param assetId The ID of the asset
+     * @return activeSubscribers An array of addresses of active subscribers
      */
-    function getAllActiveSubscriptionsByTokenId(uint256 assetId) external view returns (uint256[]) {
-        uint256[] memory activeSubscriptions = new uint256[](tokenId);
-        uint256 activeCount = 0;
+    function getActiveSubscribers(uint256 assetId) external view returns (address[] memory) {
+        uint256 count = 0;
+        uint256 totalSupply = tokenId; // Total minted tokens
 
-        for (uint256 i = 0; i <= tokenId; i++) {
-            if (subscriptions[assetId][msg.sender].validity > block.timestamp) {
-                activeSubscriptions[activeCount] = i;
-                activeCount++;
+        if (assetId >= totalSupply) {
+            revert Altnode__InvalidAssetId(assetId);
+        }
+
+        // First, count the number of active subscribers
+        address[] memory tempSubscribers = new address[](totalSupply);
+        for (uint256 i = 0; i <= totalSupply; i++) {
+            if (subscriptions[assetId][address(uint160(i))].validity > block.timestamp) {
+                tempSubscribers[count] = address(uint160(i));
+                count++;
             }
         }
 
-        return activeSubscriptions;
+        // Create a fixed-size array to return
+        address[] memory activeSubscribers = new address[](count);
+        for (uint256 j = 0; j < count; j++) {
+            activeSubscribers[j] = tempSubscribers[j];
+        }
+
+        return activeSubscribers;
     }
 }

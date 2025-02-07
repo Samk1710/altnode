@@ -32,11 +32,9 @@ abstract contract Random is VRFConsumerBaseV2Plus {
     uint256[] public s_randomWords;
     uint256 public s_requestId;
 
-    constructor(
-        uint256 subscriptionId,
-        address vrfCoordinator,
-        bytes32 keyHash
-    ) VRFConsumerBaseV2Plus(vrfCoordinator) {
+    constructor(uint256 subscriptionId, address vrfCoordinator, bytes32 keyHash)
+        VRFConsumerBaseV2Plus(vrfCoordinator)
+    {
         s_keyHash = keyHash;
         s_subscriptionId = subscriptionId;
     }
@@ -54,9 +52,7 @@ abstract contract Random is VRFConsumerBaseV2Plus {
                 requestConfirmations: REQUEST_CONFIRMATIONS,
                 callbackGasLimit: CALLBACK_GAS_LIMIT,
                 numWords: NUM_WORDS,
-                extraArgs: VRFV2PlusClient._argsToBytes(
-                    VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
-                )
+                extraArgs: VRFV2PlusClient._argsToBytes(VRFV2PlusClient.ExtraArgsV1({nativePayment: false}))
             })
         );
     }

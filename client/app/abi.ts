@@ -67,6 +67,25 @@ export const abi = [
     },
     {
         "type": "function",
+        "name": "getActiveSubscribers",
+        "inputs": [
+            {
+                "name": "assetId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address[]",
+                "internalType": "address[]"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
         "name": "getAllAssets",
         "inputs": [],
         "outputs": [
@@ -831,4 +850,4 @@ export const abi = [
     }
 ];
 
-export const contractAddress = "0xcA3FcD67aA55FBCC7922Dd6993ea27822D90FB08";
+export const contractAddress = "0xf107561dc93204262a015e9ba2205eaa847dd2e3";
