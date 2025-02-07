@@ -1,0 +1,14 @@
+POST http://localhost:3000/api/test
+Content-Type: application/json
+
+{
+  "dataKey": "0x823ba7bc9ce29ff47265b9cb3dbe815566960a24969e8e2d31f7ef6df8a72699",
+  "address": "0xF5E93e4eEDbb1235B0FB200fd77068Cb9938eF4f"
+}
+
+HTTP/1.1 200  - OK
+vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch
+content-type: application/json
+date: Fri, 24 Jan 2025 22:02:06 GMT
+connection: close
+transfer-encoding: chunked

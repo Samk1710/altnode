@@ -1,0 +1,10 @@
+POST http://localhost:3000/api/getResponse
+{
+    "model": "meta-llama/Meta-Llama-3-70B-Instruct-Turbo",
+    "dataKey": "testKey",
+    "query": "Hey there bro! Who are the villains of halluaman?",
+    "pipeKey": "testKey",
+    "inputJson": {
+        "question": "Hey there bro! Who are the villains of haluaman?"
+    }
+}
