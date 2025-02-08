@@ -5,15 +5,14 @@ pragma solidity ^0.8.19;
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
+import {AltTokens} from "./AltTokens.sol";
 /**
  * @title Altnode
  * @author Altnode devs
  * @dev Altnode is a contract for managing the Altnode NFTs.
  */
 
-contract Altnode is ERC721URIStorage, ERC20 {
+contract Altnode is ERC721URIStorage {
     /* Custom Errors */
     error Altnode__InvalidAssetId(uint256 assetId);
     error Altnode__SubscriptionExists();
@@ -61,10 +60,11 @@ contract Altnode is ERC721URIStorage, ERC20 {
         uint256 price
     );
 
-    constructor() ERC721("Altnode", "AiT_NFT") ERC20("Altnode", "AiT") {
+    constructor() ERC721("Altnode", "AiT") {
         tokenId = 0;
         owner = msg.sender;
     }
+    
 
     modifier onlyOwner() {
         if (
@@ -171,6 +171,7 @@ contract Altnode is ERC721URIStorage, ERC20 {
             price
         );
     }
+    
 
     /**
      * @dev Check if a subscription is valid
@@ -184,13 +185,6 @@ contract Altnode is ERC721URIStorage, ERC20 {
     ) public view returns (bool) {
         Subscription memory subscription = subscriptions[assetId][subscriber];
         return subscription.validity >= block.timestamp;
-    }
-
-    function buyAiT() external payable {
-        require(msg.value > 0, "Must send ETH to purchase AiT.");
-        uint256 tokenAmount = msg.value * exchangeRate;
-        _mint(msg.sender, tokenAmount);
-        emit TokensPurchased(msg.sender, msg.value, tokenAmount);
     }
 
     /* Getter Functions */
@@ -341,4 +335,4 @@ contract Altnode is ERC721URIStorage, ERC20 {
     ) external view returns (bytes32) {
         return subscriptions[assetId][subscriber].accessKey;
     }
-}
+} 
