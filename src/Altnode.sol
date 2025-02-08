@@ -6,6 +6,7 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {AltTokens} from "./AltTokens.sol";
+
 /**
  * @title Altnode
  * @author Altnode devs
@@ -64,7 +65,6 @@ contract Altnode is ERC721URIStorage {
         tokenId = 0;
         owner = msg.sender;
     }
-    
 
     modifier onlyOwner() {
         if (
@@ -171,7 +171,6 @@ contract Altnode is ERC721URIStorage {
             price
         );
     }
-    
 
     /**
      * @dev Check if a subscription is valid
@@ -335,4 +334,4 @@ contract Altnode is ERC721URIStorage {
     ) external view returns (bytes32) {
         return subscriptions[assetId][subscriber].accessKey;
     }
-} 
+}

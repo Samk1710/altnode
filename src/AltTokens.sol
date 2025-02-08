@@ -68,7 +68,6 @@ contract AltTokens is ERC20 {
         tokenId = 0;
         owner = msg.sender;
     }
-    
 
     modifier onlyOwner() {
         if (
@@ -83,7 +82,6 @@ contract AltTokens is ERC20 {
         _;
     }
 
-    
     function buyAiT() external payable {
         uint256 exchangeRate = 100;
         require(msg.value > 0, "Must send ETH to purchase AiT.");
@@ -91,7 +89,4 @@ contract AltTokens is ERC20 {
         _mint(msg.sender, tokenAmount);
         emit TokensPurchased(msg.sender, msg.value, tokenAmount);
     }
-
-    
-    
 }
