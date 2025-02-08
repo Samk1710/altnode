@@ -244,7 +244,7 @@ export default function PipelinePreview({
             src={(() => {
               try {
                 return JSON.parse(sampleInput);
-              } catch (e) {
+              } catch {
                 return {};
               }
             })()}
@@ -272,7 +272,7 @@ export default function PipelinePreview({
             src={(() => {
               try {
                 return JSON.parse(sampleOutput);
-              } catch (e) {
+              } catch {
                 return {};
               }
             })()}

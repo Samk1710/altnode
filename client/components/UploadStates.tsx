@@ -5,9 +5,7 @@ import {
   X,
   Upload,
   Check,
-  AlertCircle,
-  ImageIcon,
-  Loader2,
+  AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
