@@ -5,7 +5,8 @@ pragma solidity ^0.8.19;
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-import {AltTokens} from "./AltTokens.sol";
+
+// import {AltTokens} from "./AltTokens.sol";
 
 /**
  * @title Altnode
@@ -184,6 +185,43 @@ contract Altnode is ERC721URIStorage {
     ) public view returns (bool) {
         Subscription memory subscription = subscriptions[assetId][subscriber];
         return subscription.validity >= block.timestamp;
+    }
+
+    /**
+     * @dev Get all active subscribers for a specific asset
+     * @param assetId The ID of the asset
+     * @return subscribers Array of addresses with active subscriptions
+     */
+    function getActiveSubscribers(
+        uint256 assetId
+    ) external view returns (address[] memory) {
+        if (assetId > tokenId) {
+            revert Altnode__InvalidAssetId(assetId);
+        }
+
+        // First, count the number of active subscribers
+        uint256 activeCount = 0;
+        address[] memory tempSubscribers = new address[](2 ** 16); // Temporary array with maximum possible size
+
+        // Get active subscribers
+        for (uint160 i = 0; i < 2 ** 160; i++) {
+            address subscriber = address(i);
+            if (
+                subscriptions[assetId][subscriber].validity >= block.timestamp
+            ) {
+                tempSubscribers[activeCount] = subscriber;
+                activeCount++;
+            }
+            if (activeCount >= 2 ** 16) break; // Safety check to prevent overflow
+        }
+
+        // Create final array with exact size
+        address[] memory activeSubscribers = new address[](activeCount);
+        for (uint256 i = 0; i < activeCount; i++) {
+            activeSubscribers[i] = tempSubscribers[i];
+        }
+
+        return activeSubscribers;
     }
 
     /* Getter Functions */
