@@ -5,6 +5,7 @@ pragma solidity ^0.8.19;
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 /**
  * @title Altnode
@@ -12,7 +13,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
  * @dev Altnode is a contract for managing the Altnode NFTs.
  */
 
-contract Altnode is ERC721URIStorage {
+contract Altnode is ERC721URIStorage, ERC20 {
     /* Custom Errors */
     error Altnode__InvalidAssetId(uint256 assetId);
     error Altnode__SubscriptionExists();
@@ -60,7 +61,7 @@ contract Altnode is ERC721URIStorage {
         uint256 price
     );
 
-    constructor() ERC721("Altnode", "AiT") {
+    constructor() ERC721("Altnode", "AiT_NFT") ERC20("Altnode", "AiT") {
         tokenId = 0;
         owner = msg.sender;
     }
@@ -183,6 +184,13 @@ contract Altnode is ERC721URIStorage {
     ) public view returns (bool) {
         Subscription memory subscription = subscriptions[assetId][subscriber];
         return subscription.validity >= block.timestamp;
+    }
+
+    function buyAiT() external payable {
+        require(msg.value > 0, "Must send ETH to purchase AiT.");
+        uint256 tokenAmount = msg.value * exchangeRate;
+        _mint(msg.sender, tokenAmount);
+        emit TokensPurchased(msg.sender, msg.value, tokenAmount);
     }
 
     /* Getter Functions */
@@ -332,36 +340,5 @@ contract Altnode is ERC721URIStorage {
         address subscriber
     ) external view returns (bytes32) {
         return subscriptions[assetId][subscriber].accessKey;
-    }
-
-    /**
-     * @dev Get all active subscribers for a given asset ID
-     * @param assetId The ID of the asset
-     * @return activeSubscribers An array of addresses of active subscribers
-     */
-    function getActiveSubscribers(uint256 assetId) external view returns (address[] memory) {
-        uint256 count = 0;
-        uint256 totalSupply = tokenId; // Total minted tokens
-
-        if (assetId >= totalSupply) {
-            revert Altnode__InvalidAssetId(assetId);
-        }
-
-        // First, count the number of active subscribers
-        address[] memory tempSubscribers = new address[](totalSupply);
-        for (uint256 i = 0; i <= totalSupply; i++) {
-            if (subscriptions[assetId][address(uint160(i))].validity > block.timestamp) {
-                tempSubscribers[count] = address(uint160(i));
-                count++;
-            }
-        }
-
-        // Create a fixed-size array to return
-        address[] memory activeSubscribers = new address[](count);
-        for (uint256 j = 0; j < count; j++) {
-            activeSubscribers[j] = tempSubscribers[j];
-        }
-
-        return activeSubscribers;
     }
 }
