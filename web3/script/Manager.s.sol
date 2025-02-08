@@ -4,7 +4,6 @@ pragma solidity ^0.8.13;
 import {Script, console} from "forge-std/Script.sol";
 import {AltnodeManager} from "../src/Manager.sol";
 
-
 contract AltnodeScript is Script {
     AltnodeManager public altnodeman;
 
