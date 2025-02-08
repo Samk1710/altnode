@@ -2,11 +2,10 @@
 
 import { useRef, useEffect } from 'react'
 import MonacoEditor from '@monaco-editor/react'
-import * as monaco from 'monaco-editor'
 
 interface EditorProps {
   code: string;
-  onChange: (value: string | undefined, event: monaco.editor.IModelContentChangedEvent) => void;
+  onChange: (value: string | undefined, event: Event) => void;
 }
 
 export default function Editor({ code, onChange }: EditorProps) {

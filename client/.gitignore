@@ -13,6 +13,10 @@
 # testing
 /coverage
 
+# python
+__pycache__/
+*.pyc
+
 # next.js
 /.next/
 /out/
@@ -28,7 +32,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
 .env*

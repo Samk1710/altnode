@@ -1,32 +1,26 @@
-"use client";
+"use client"
 
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { useState, useRef } from "react";
-import { Upload, ImageIcon, Loader2 } from "lucide-react";
-import dynamic from "next/dynamic";
-// import "@uiw/rea";
-import "@uiw/react-markdown-preview/markdown.css";
-import ReactJson from "react-json-view";
-import { UploadStates } from "./UploadStates";
+import { motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
+import { useState, useRef } from "react"
+import { Upload, ImageIcon, Loader2 } from 'lucide-react'
+import dynamic from "next/dynamic"
+import "@uiw/react-md-editor/markdown-editor.css"
+import "@uiw/react-markdown-preview/markdown.css"
+import ReactJson from "react-json-view"
+import { UploadStates } from "./UploadStates"
 
-const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false })
 
 interface PipelinePreviewProps {
-  handleMintNFT: (
-    readme: string,
-    sampleInput: string,
-    sampleOutput: string,
-    name: string,
-    price: number
-  ) => void;
-  isTestingComplete: boolean;
-  testsPassed: number;
-  isConfirmed: boolean;
-  isPending: boolean;
-  genImage: () => Promise<Blob | null>;
+  handleMintNFT: (readme: string, sampleInput: string, sampleOutput: string, name: string, price: number) => void
+  isTestingComplete: boolean
+  testsPassed: number
+  isConfirmed: boolean
+  isPending: boolean
+  genImage: () => Promise<Blob | null>
 }
 
 export default function PipelinePreview({
@@ -37,72 +31,64 @@ export default function PipelinePreview({
   isTestingComplete,
   testsPassed,
 }: PipelinePreviewProps) {
-  const [readme, setReadme] = useState(`# GenPipe IDE`);
+  const [readme, setReadme] = useState(`# GenPipe IDE`)
   const [sampleInput, setSampleInput] = useState(`{
     "input": "This is a sample input."
-  }`);
+  }`)
   const [sampleOutput, setSampleOutput] = useState(`{
     "output": "This is a sample output."
-  }`);
-
+  }`)
+  
   // New states for file upload and image generation
-  const [uploadState, setUploadState] = useState<
-    "idle" | "uploading" | "success" | "error"
-  >("idle");
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [generationCount, setGenerationCount] = useState(0);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadState, setUploadState] = useState<"idle" | "uploading" | "success" | "error">("idle")
+  const [name, setName] = useState("")
+  const [price, setPrice] = useState(0)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+  const [generationCount, setGenerationCount] = useState(0)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleMint = () => {
-    handleMintNFT(
-      readme,
-      JSON.parse(sampleInput),
-      JSON.parse(sampleOutput),
-      name,
-      price
-    );
-  };
+    handleMintNFT(readme, JSON.parse(sampleInput), JSON.parse(sampleOutput), name, price)
+  }
 
   const simulateUpload = async (file: File) => {
-    setUploadState("uploading");
-
+    setUploadState("uploading")
+    
     for (let progress = 0; progress <= 100; progress += 10) {
-      setUploadProgress(progress);
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      setUploadProgress(progress)
+      await new Promise(resolve => setTimeout(resolve, 200))
     }
 
     // Simulate success/failure
     if (Math.random() > 0.2) {
-      setUploadState("success");
-      const imageUrl = URL.createObjectURL(file);
-      setUploadedImage(imageUrl);
+      setUploadState("success")
+      const imageUrl = URL.createObjectURL(file)
+      setUploadedImage(imageUrl)
     } else {
-      setUploadState("error");
+      setUploadState("error")
     }
-  };
+  }
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const file = event.target.files?.[0]
     if (file) {
-      simulateUpload(file);
+      simulateUpload(file)
     }
-  };
+  }
 
   const handleGenerateImage = async () => {
-    if (generationCount >= 3) return;
-    setIsGenerating(true);
-    const blob = await genImage();
+    if (generationCount >= 3) return
+    setIsGenerating(true)
+    const blob = await genImage()
     if (blob) {
-      const URL = window.URL.createObjectURL(blob);
-      setGenerationCount((prev) => prev + 1);
-      setUploadedImage(URL);
+      const URL = window.URL.createObjectURL(blob)
+      setGenerationCount(prev => prev + 1)
+      setUploadedImage(URL)
     }
-    setIsGenerating(false);
-  };
+    setIsGenerating(false)
+  }
 
   return (
     <motion.div
@@ -111,9 +97,7 @@ export default function PipelinePreview({
       animate={{ x: 0, opacity: 1 }}
       transition={{ delay: 0.3, duration: 0.5 }}
     >
-      <h1 className="text-3xl font-semibold mb-4 text-secondary">
-        Generation Engine Config
-      </h1>
+      <h1 className="text-3xl font-semibold mb-4 text-secondary">Generation Engine Config</h1>
       <h1 className="text-xl font-semibold mb-4 text-secondary">NFT Image</h1>
       <div className="mb-6 space-y-4">
         <Input
@@ -131,6 +115,7 @@ export default function PipelinePreview({
           onChange={(e) => setPrice(parseFloat(e.target.value))}
         />
       </div>
+
 
       <div className="mb-6 space-y-4">
         <div className="flex items-center gap-4">
@@ -166,25 +151,20 @@ export default function PipelinePreview({
         </div>
 
         <div className="space-y-4">
-          <div className="w-full">
+            <div className="w-full">
             <Button
               onClick={handleGenerateImage}
-              disabled={
-                generationCount >= 3 ||
-                isGenerating ||
-                !isTestingComplete ||
-                testsPassed < 3
-              }
+              disabled={generationCount >= 3 || isGenerating || !isTestingComplete || testsPassed < 3}
               className="w-full whitespace-nowrap"
             >
               {isGenerating ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : (
-                <ImageIcon className="w-4 h-4 mr-2" />
+              <ImageIcon className="w-4 h-4 mr-2" />
               )}
               Generate ({3 - generationCount} left)
             </Button>
-          </div>
+            </div>
 
           {uploadedImage && (
             <motion.div
@@ -206,30 +186,26 @@ export default function PipelinePreview({
         state={uploadState}
         progress={uploadProgress}
         onCancel={() => {
-          setUploadState("idle");
-          setUploadProgress(0);
+          setUploadState("idle")
+          setUploadProgress(0)
         }}
         onRetry={() => {
-          setUploadState("uploading");
-          setUploadProgress(0);
-          simulateUpload(new File([], "retry.jpg"));
+          setUploadState("uploading")
+          setUploadProgress(0)
+          simulateUpload(new File([], "retry.jpg"))
         }}
         onDone={() => setUploadState("idle")}
       />
 
-      <h1 className="text-3xl font-semibold mb-4 text-secondary">
-        Pipeline Docs
-      </h1>
-
+      <h1 className="text-3xl font-semibold mb-4 text-secondary">Pipeline Docs</h1>
+      
       {/* Rest of the existing PipelinePreview component */}
       <h1 className="text-xl font-semibold mb-4 text-secondary">README.md</h1>
       <MDEditor value={readme} onChange={(value) => setReadme(value || "")} />
       <br />
       <hr />
       <br />
-      <h1 className="text-xl font-semibold mb-4 text-secondary">
-        Sample Input (input_json)
-      </h1>
+      <h1 className="text-xl font-semibold mb-4 text-secondary">Sample Input (input_json)</h1>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Textarea
@@ -243,9 +219,9 @@ export default function PipelinePreview({
           <ReactJson
             src={(() => {
               try {
-                return JSON.parse(sampleInput);
-              } catch {
-                return {};
+                return JSON.parse(sampleInput)
+              } catch (e) {
+                return {}
               }
             })()}
             theme="summerfruit"
@@ -255,9 +231,7 @@ export default function PipelinePreview({
       <br />
       <hr />
       <br />
-      <h1 className="text-xl font-semibold mb-4 text-secondary">
-        Sample Output
-      </h1>
+      <h1 className="text-xl font-semibold mb-4 text-secondary">Sample Output</h1>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Textarea
@@ -271,9 +245,9 @@ export default function PipelinePreview({
           <ReactJson
             src={(() => {
               try {
-                return JSON.parse(sampleOutput);
-              } catch {
-                return {};
+                return JSON.parse(sampleOutput)
+              } catch (e) {
+                return {}
               }
             })()}
             theme="summerfruit"
@@ -287,8 +261,9 @@ export default function PipelinePreview({
         className="w-full border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground transition-all duration-300 ease-in-out transform hover:scale-105 rounded-md"
         disabled={!isTestingComplete || testsPassed < 3}
       >
-        {isConfirmed || !isPending ? "Mint GenPipe NFT" : "Minting"}
+        {isConfirmed || !isPending ? 'Mint GenPipe NFT': "Minting"}
       </Button>
     </motion.div>
-  );
+  )
 }
+

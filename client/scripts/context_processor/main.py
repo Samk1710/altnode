@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # main()
     current_script_path = pathlib.Path(__file__).resolve()
     project_root = current_script_path.parent.parent.parent
-    absolute_path = os.path.join(project_root, "temp/temp.txt")
+    absolute_path = os.path.join(project_root, "public/temp/temp.txt")
     with open(absolute_path, "r") as f:
         text = f.read()
     os.remove(absolute_path)

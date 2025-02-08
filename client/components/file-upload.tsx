@@ -13,7 +13,7 @@ interface FileUploadProps {
 
 export function FileUpload({ onFileContent, onUploadComplete }: FileUploadProps) {
   const [uploadProgress, setUploadProgress] = useState(0)
-  // const [isDragging, setIsDragging] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0]

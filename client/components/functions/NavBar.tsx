@@ -9,7 +9,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { name: "Build Agent", href: "/ide" },
+    { name: "Create Prompt", href: "/ide" },
     { name: "Submit Dataset", href: "/upload" },
     { name: "Marketplace", href: "/nfts" },
     { name: "About", href: "/about" },
@@ -31,7 +31,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="whitespace-pre-wrap bg-gradient-to-r from-[#F0F8FF] via-[#9370DB] to-[#FFB6C1] bg-clip-text text-center text-2xl md:text-4xl font-semibold leading-none text-transparent animate-gradient-fast dark:from-[#F0F8FF] dark:via-[#9370DB] dark:to-[#FFB6C1]"
+            className="whitespace-pre-wrap bg-gradient-to-r from-[#F0F8FF] via-[#87CEEB] via-[#9370DB] to-[#FFB6C1] bg-clip-text text-center text-2xl md:text-4xl font-semibold leading-none text-transparent animate-gradient-fast dark:from-[#F0F8FF] dark:via-[#87CEEB] dark:via-[#9370DB] dark:to-[#FFB6C1] dark:via-[#F0F8FF]"
           >
             Al<i>t</i>node
           </Link>

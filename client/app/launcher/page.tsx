@@ -68,6 +68,7 @@ function App() {
     address: contractAddress,
     abi: abi,
     functionName: "getActiveSubscribers",
+    args: [0]
   });
   const { data: nftData = [] as any[], refetch: refetchNft } = useReadContract({
     address: contractAddress,
@@ -90,20 +91,36 @@ function App() {
   useEffect(() => {
     if (nftData) {
       console.log("NFT Data:", nftData);
-      console.log("Hi")
-      // const nfts: NFT[] = nftData.map((nft: any) => ({
-      //   tokenId: nft.tokenId,
-      //   tokenUri: nft.tokenUri,
-      //   name: nft.name,
-      //   description: nft.description,
-      //   price: nft.price,
-      //   owner: nft.owner,
-      //   image: nft.image,
-      //   attributes: nft.attributes,
-      // }));
-      // setAvailableNfts(nfts);
+
+      const fetchNftMetadata = async () => {
+        try {
+          const parsedData = typeof nftData === "string" ? JSON.parse(nftData) : nftData;
+
+          const updatedNfts = (
+            await Promise.all(
+              parsedData.map(async (nft: NFT) => {
+                try {
+                  const metadata = await fetchData(nft.tokenUri);
+                  return { ...nft, ...metadata }; // Merge metadata with NFT object
+                } catch (error) {
+                  console.error(`Error fetching metadata for tokenUri ${nft.tokenUri}:`, error);
+                  return nft; // Return the NFT object as is if metadata fetch fails
+                }
+              })
+            )
+          );
+
+          console.log("Updated NFTs with metadata: ", updatedNfts);
+          setAvailableNfts(updatedNfts);
+        } catch (error) {
+          console.error("Error processing NFT data: ", error);
+        }
+      };
+
+      fetchNftMetadata();
     }
   }, [nftData]);
+
 
   useEffect(() => {
     if (data) {
@@ -117,6 +134,11 @@ function App() {
     }
   }, [data]);
 
+  async function fetchData(tokenUri: string) {
+    const res = await fetch(tokenUri);
+    const data = await res.json();
+    return data;
+  }
 
   const handleNftClick = (id: number) => {
     setSelectedNft(id);
@@ -151,7 +173,7 @@ function App() {
     const perAddressPercentage =
       formData.airdropAddresses.length > 0
         ? parseFloat(formData.airdropPercentage) /
-          formData.airdropAddresses.length
+        formData.airdropAddresses.length
         : 0;
 
     console.log("Form submitted:", {

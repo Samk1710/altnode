@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { motion, MotionProps, useInView, Variants } from "framer-motion";
+import { motion, MotionProps, useInView, Variants } from "motion/react";
 import { useRef } from "react";
 
 interface WordPullUpProps extends MotionProps {
@@ -46,7 +46,7 @@ export default function WordPullUp({
       animate={shouldAnimate ? "show" : "hidden"}
       className={cn(
         "text-4xl font-bold leading-[5rem] tracking-[-0.02em]",
-        className
+        className,
       )}
     >
       {children.split(" ").map((word, i) => (

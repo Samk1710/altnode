@@ -11,7 +11,7 @@ interface AIGenerationModalProps {
 }
 
 export function AIGenerationModal({ isOpen, onClose, onGenerate }: AIGenerationModalProps) {
-  const [prompt, setPrompt] = useState('the agent should make a joke out of whatever subject I provide');
+  const [prompt, setPrompt] = useState('the pipeline should make a joke out of whatever subject I provide');
   const [inputJson, setInputJson] = useState(`{
 "subject": "tree"
 }`);
@@ -42,7 +42,7 @@ export function AIGenerationModal({ isOpen, onClose, onGenerate }: AIGenerationM
             exit={{ scale: 0.9, opacity: 0 }}
             className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg p-6 w-full max-w-lg border border-white border-opacity-20 shadow-xl"
           >
-            <h2 className="text-2xl font-bold mb-4 text-white">Build AI Agent</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">Generate AI Pipeline</h2>
             <Textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}

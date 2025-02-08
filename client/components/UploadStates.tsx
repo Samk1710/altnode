@@ -1,21 +1,16 @@
-"use client";
+"use client"
 
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  X,
-  Upload,
-  Check,
-  AlertCircle
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion"
+import { X, Upload, Check, AlertCircle, ImageIcon, Loader2 } from 'lucide-react'
+import { Button } from "@/components/ui/button"
 
 interface UploadStatesProps {
-  state: "idle" | "uploading" | "success" | "error";
-  progress?: number;
-  onCancel?: () => void;
-  onRetry?: () => void;
-  onCopyLink?: () => void;
-  onDone?: () => void;
+  state: "idle" | "uploading" | "success" | "error"
+  progress?: number
+  onCancel?: () => void
+  onRetry?: () => void
+  onCopyLink?: () => void
+  onDone?: () => void
 }
 
 export function UploadStates({
@@ -29,7 +24,7 @@ export function UploadStates({
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -20 },
-  };
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -46,20 +41,19 @@ export function UploadStates({
               state === "uploading"
                 ? "linear-gradient(to right, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1))"
                 : state === "success"
-                ? "linear-gradient(to right, rgba(34, 197, 94, 0.1), rgba(21, 128, 61, 0.1))"
-                : "linear-gradient(to right, rgba(239, 68, 68, 0.1), rgba(185, 28, 28, 0.1))",
+                  ? "linear-gradient(to right, rgba(34, 197, 94, 0.1), rgba(21, 128, 61, 0.1))"
+                  : "linear-gradient(to right, rgba(239, 68, 68, 0.1), rgba(185, 28, 28, 0.1))",
           }}
         >
           <div className="flex items-start justify-between">
             <div className="flex gap-3">
               <div
-                className={`w-16 h-8 rounded-full flex items-center justify-center ${
-                  state === "uploading"
+                className={`w-16 h-8 rounded-full flex items-center justify-center ${state === "uploading"
                     ? "bg-blue-500"
                     : state === "success"
-                    ? "bg-green-500"
-                    : "bg-red-500"
-                }`}
+                      ? "bg-green-500"
+                      : "bg-red-500"
+                  }`}
               >
                 {state === "uploading" ? (
                   <Upload className="h-4 w-4 text-white" />
@@ -75,15 +69,15 @@ export function UploadStates({
                   {state === "uploading"
                     ? "Just a minute..."
                     : state === "success"
-                    ? "Your file was uploaded!"
-                    : "We are so sorry!"}
+                      ? "Your file was uploaded!"
+                      : "We are so sorry!"}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {state === "uploading"
                     ? "Your file is uploading right now. Just give us a second to finish your upload."
                     : state === "success"
-                    ? "Your file was successfully uploaded. This is your official NFT Image now!"
-                    : "There was an error and your file could not be uploaded. Would you like to try again?"}
+                      ? "Your file was successfully uploaded. This is your official NFT Image now!"
+                      : "There was an error and your file could not be uploaded. Would you like to try again?"}
                 </p>
               </div>
             </div>
@@ -108,9 +102,7 @@ export function UploadStates({
                 />
               </div>
               <div className="mt-2 flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">
-                  {progress}%
-                </span>
+                <span className="text-sm text-muted-foreground">{progress}%</span>
                 <Button
                   variant="secondary"
                   size="sm"
@@ -159,5 +151,6 @@ export function UploadStates({
         </motion.div>
       )}
     </AnimatePresence>
-  );
+  )
 }
+
