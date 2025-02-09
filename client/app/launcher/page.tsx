@@ -10,35 +10,16 @@ import {
   Plus,
   Percent,
 } from "lucide-react";
-import { useReadContract } from "wagmi";
+import { useReadContract, useDeployContract, usePublicClient } from "wagmi";
 import { useAccount } from "wagmi";
-import { abi, contractAddress } from "../abi";
+import { abi, bytecode, contractAddress, launcherAbi } from "../abi";
 import Navbar from "@/components/functions/NavBar";
+import { PinataSDK } from "pinata-web3";
 
-// Mock NFT data - in a real app this would come from an API
-const AVAILABLE_NFTS = [
-  {
-    id: 1,
-    name: "Cosmic Dreamer #1",
-    image:
-      "https://images.unsplash.com/photo-1634973357973-f2ed2657db3c?auto=format&fit=crop&q=80&w=500",
-    description: "A mystical NFT from the cosmic collection",
-  },
-  {
-    id: 2,
-    name: "Digital Phoenix #2",
-    image:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=500",
-    description: "Rising from the digital ashes",
-  },
-  {
-    id: 3,
-    name: "Neon Warrior #3",
-    image:
-      "https://images.unsplash.com/photo-1569428034239-f9565e32e224?auto=format&fit=crop&q=80&w=500",
-    description: "A warrior from the neon realm",
-  },
-];
+const pinata = new PinataSDK({
+  pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT,
+  pinataGateway: process.env.NEXT_PUBLIC_PINATA_GATEWAY,
+});
 
 interface TokenFormData {
   name: string;
@@ -67,6 +48,7 @@ interface NFTAttribute {
 
 function App() {
   const account = useAccount();
+  const publicClient = usePublicClient();
   const { data: nftData = [] as any[], refetch: refetchNft } = useReadContract({
     address: contractAddress,
     abi: abi,
@@ -79,6 +61,7 @@ function App() {
     functionName: "getActiveSubscribers",
     args: [0],
   });
+  const { deployContractAsync } = useDeployContract();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [availableNfts, setAvailableNfts] = useState<NFT[]>([]);
   const [formData, setFormData] = useState<TokenFormData>({
@@ -91,6 +74,9 @@ function App() {
   });
   const [activeSubscribers, setActiveSubscribers] = useState<string[]>([]);
   const [numSubs, setNumSubs] = useState(0);
+  const [deployedContractAddress, setDeployedContractAddress] = useState("");
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+
   useEffect(() => {
     if (nftData) {
       console.log("NFT Data:", nftData);
@@ -187,21 +173,49 @@ function App() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const perAddressPercentage =
-      formData.airdropAddresses.length > 0
-        ? parseFloat(formData.airdropPercentage) /
-          formData.airdropAddresses.length
-        : 0;
+    console.log("Deploying contract...");
 
-    console.log("Form submitted:", {
-      ...formData,
-      airdropDistribution: formData.airdropAddresses.map((address) => ({
-        address,
-        percentage: perAddressPercentage.toFixed(2),
-      })),
+    const lore = await pinata.upload.json({ lore: formData.lore });
+    const loreURI = `https://ipfs.io/ipfs/${lore.IpfsHash}`;
+    console.log("Lore uploaded:", loreURI);
+    const args = [
+      formData.name,
+      formData.symbol,
+      formData.initialSupply,
+      loreURI,
+      [...formData.airdropAddresses, ...activeSubscribers],
+      formData.airdropPercentage,
+    ];
+    console.log("Args:", args);
+    const txHash = await deployContractAsync({
+      abi: launcherAbi,
+      bytecode: bytecode as `0x${string}`,
+      args: args,
     });
+
+    console.log("Transaction sent:", txHash);
+
+    if (publicClient) {
+      try {
+        console.log("Waiting for transaction confirmation...");
+        const receipt = await publicClient.waitForTransactionReceipt({
+          hash: txHash,
+        });
+        console.log("Transaction Receipt:", receipt);
+
+        if (receipt.contractAddress) {
+          console.log("Deployed Contract Address:", receipt.contractAddress);
+          setDeployedContractAddress(receipt.contractAddress);
+          setIsConfirmationModalOpen(true);
+        }
+      } catch (error) {
+        console.error("Error fetching transaction receipt:", error);
+      }
+    } else {
+      console.log("Transaction Hash:", txHash);
+    }
 
     setIsModalOpen(false);
     setFormData({
@@ -235,7 +249,7 @@ function App() {
               >
                 <div className="bg-gray-800 rounded-xl overflow-hidden border-2 border-purple-500/30 hover:border-purple-500">
                   <img
-                    src={nft.image}
+                    src={nft.image || "/placeholder.svg"}
                     alt={nft.name}
                     className="w-full h-64 object-cover"
                   />
@@ -349,22 +363,24 @@ function App() {
                     </div>
 
                     <div>
-                      <div className="flex justify-between items-center mb-4">
-                        <label className="block text-sm font-medium text-gray-300">
-                          Airdrop Configuration
-                        </label>
-                        <button
-                          type="button"
-                          onClick={addAirdropAddress}
-                          className="flex items-center text-purple-400 hover:text-purple-300 transition-colors"
-                        >
-                          <Plus size={16} className="mr-1" />
-                          Add Address
-                        </button>
+                      <div className="mb-4">
+                        <div className="flex justify-between items-center">
+                          <label className="block text-md font-medium text-gray-300">
+                            Airdrop Configuration
+                          </label>
+                          <button
+                            type="button"
+                            onClick={addAirdropAddress}
+                            className="flex items-center text-purple-400 hover:text-purple-300 transition-colors"
+                          >
+                            <Plus size={16} className="mr-1" />
+                            Add Address
+                          </button>
+                        </div>
+                        <p className="text-sm text-gray-400 mt-2">
+                          {numSubs} Active Subscribers for this Agent
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-400 mt-2">
-                        {numSubs} active subscribers for this NFT
-                      </p>
                       <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                           Total Airdrop Percentage
@@ -389,13 +405,14 @@ function App() {
                             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                           />
                         </div>
-                        {formData.airdropAddresses.length > 0 &&
+                        {(formData.airdropAddresses.length > 0 ||
+                          numSubs > 0) &&
                           formData.airdropPercentage && (
                             <p className="text-sm text-gray-400 mt-2">
                               Each address will receive{" "}
                               {(
-                                parseFloat(formData.airdropPercentage) /
-                                formData.airdropAddresses.length
+                                Number.parseFloat(formData.airdropPercentage) /
+                                (formData.airdropAddresses.length + numSubs)
                               ).toFixed(2)}
                               % of the total supply
                             </p>
@@ -435,6 +452,40 @@ function App() {
                     </button>
                   </form>
                 </div>
+              </div>
+            </div>
+          )}
+          {isConfirmationModalOpen && (
+            <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+              <div className="bg-gray-800 rounded-2xl w-full max-w-lg p-6 text-center">
+                <h2 className="text-2xl font-bold text-white mb-4">
+                  Token Deployed Successfully! 🎉
+                </h2>
+                <p className="text-gray-300 mb-4">
+                  Your token contract has been deployed to:
+                </p>
+                <div className="bg-gray-700 rounded-lg p-3 mb-4 break-all">
+                  <code className="text-purple-400">
+                    {deployedContractAddress}
+                  </code>
+                </div>
+                <p className="text-gray-300 mb-4">
+                  View your token contract on Sepolia BaseScan:
+                </p>
+                <a
+                  href={`https://sepolia.basescan.org/address/${deployedContractAddress}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 mb-4"
+                >
+                  View on BaseScan
+                </a>
+                <button
+                  onClick={() => setIsConfirmationModalOpen(false)}
+                  className="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200"
+                >
+                  Close
+                </button>
               </div>
             </div>
           )}
