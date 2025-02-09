@@ -9,9 +9,9 @@ import { useReadContract, useAccount } from "wagmi"
 import { formatEther } from "viem"
 
 // This is a placeholder. Replace with actual function to fetch balance
-const fetchAitBalance = async () => {
-    return "1000" // Placeholder value
-}
+// const fetchAitBalance = async () => {
+//     return "1000" // Placeholder value
+// }
 
 // This is a placeholder. Replace with actual AIT token contract address
 const AIT_CONTRACT_ADDRESS = tokenAddress;
@@ -33,7 +33,7 @@ export function AitBalanceButton() {
             setBalance(formatEther(BigInt(result.data.toString())))
             console.log("Balance:", formatEther(BigInt(result.data.toString())))
         } else if (!balance) {
-            const fetchedBalance = await fetchAitBalance()
+            const fetchedBalance = "0"
             setBalance(fetchedBalance)
         }
     }

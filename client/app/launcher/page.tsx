@@ -9,6 +9,9 @@ import {
   X,
   Plus,
   Percent,
+  TrendingUp,
+  ShoppingCart,
+  Tag,
 } from "lucide-react";
 import {
   useReadContract,
@@ -27,6 +30,7 @@ import {
 } from "../abi";
 import Navbar from "@/components/functions/NavBar";
 import { PinataSDK } from "pinata-web3";
+import { parseEther } from "viem";
 
 const BURN_CONSTANT = 1000;
 
@@ -50,6 +54,8 @@ interface AgentTokens {
   symbol: string;
   lore: string;
   price: number;
+  owner: string;
+  saleActive: boolean;
 }
 
 interface NFT {
@@ -69,7 +75,17 @@ interface NFTAttribute {
 }
 
 function App() {
-  const account = useAccount();
+  const { isConnected, address } = useAccount();
+  // const [address, setAddress] = useState<`0x${string}`|null>(null);
+  const { data: userTokenContracts, refetch: justRefetch } = useReadContract({
+    address: tokenAddress,
+    abi: tokenAbi,
+    functionName: "getContracts",
+    args: [address],
+    query: {
+      enabled: isConnected,
+    }
+  });
   const publicClient = usePublicClient();
   const { data: nftData = [] as any[], refetch: refetchNft } = useReadContract({
     address: contractAddress,
@@ -83,12 +99,6 @@ function App() {
     functionName: "getActiveSubscribers",
     args: [selectedNft],
   });
-  // const { data: tokenData, refetch: refetchToken } = useReadContract({
-  //   address: tokenAddress,
-  //   abi: tokenAbi,
-  //   functionName: "burnAiT",
-  //   args: [],
-  // });
   const { writeContractAsync } = useWriteContract();
   const { deployContractAsync } = useDeployContract();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -107,6 +117,85 @@ function App() {
   const [numSubs, setNumSubs] = useState(0);
   const [deployedContractAddress, setDeployedContractAddress] = useState("");
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [allAgentTokens, setAllAgentTokens] = useState<AgentTokens[]>([]);
+  const [userAgentTokens, setUserAgentTokens] = useState<AgentTokens[]>([]);
+  const getDummyAgentTokens = (): AgentTokens[] => {
+    return [
+      {
+        contractAddress: "0x1234...5678",
+        name: "CryptoWhisperer",
+        symbol: "WHSP",
+        lore: "A token born from the depths of AI wisdom",
+        price: 0.05,
+        owner: "0xabcd...efgh",
+        saleActive: true,
+      },
+      {
+        contractAddress: "0x8765...4321",
+        name: "DataOracle",
+        symbol: "DORA",
+        lore: "Empowering data-driven decisions",
+        price: 0.03,
+        owner: "0xijkl...mnop",
+        saleActive: true,
+      },
+      // Add more dummy tokens as needed
+    ];
+  };
+
+  // Add new dummy data function for user's agent tokens
+  const getUserAgentTokens = (userAddress: string): AgentTokens[] => {
+    justRefetch();
+    console.log("Hi")
+    console.log(userTokenContracts);
+    return [
+      {
+        contractAddress: "0x9999...8888",
+        name: "MyAIToken",
+        symbol: "MAIT",
+        lore: "Personal AI assistant token",
+        price: 0.02,
+        owner: userAddress,
+        saleActive: true,
+      },
+      {
+        contractAddress: "0x7777...6666",
+        name: "BrainToken",
+        symbol: "BRNT",
+        lore: "Neural network powered token",
+        price: 0.04,
+        owner: userAddress,
+        saleActive: false,
+      },
+    ];
+  };
+  // Add new useEffect for fetching agent tokens
+  useEffect(() => {
+    if (address) {
+      justRefetch();
+      const userTokens = getUserAgentTokens(address);
+      const allTokens = getDummyAgentTokens();
+
+      // Remove user's tokens from all tokens
+      const trendingTokens = allTokens.filter(
+        (token) =>
+          !userTokens.some((ut) => ut.contractAddress === token.contractAddress)
+      );
+
+      setUserAgentTokens(userTokens);
+      setAllAgentTokens(trendingTokens);
+    }
+  }, [address]);
+
+  const handleBuyToken = (token: AgentTokens) => {
+    console.log("Buying token:", token);
+    // Implement buy logic here
+  };
+
+  const handleSellToken = (token: AgentTokens) => {
+    console.log("Selling token:", token);
+    // Implement sell logic here
+  };
 
   useEffect(() => {
     if (nftData) {
@@ -134,7 +223,7 @@ function App() {
 
           // console.log("Updated NFTs with metadata: ", updatedNfts);
           const myNfts = updatedNfts.filter(
-            (nft: NFT) => nft.owner === account.address
+            (nft: NFT) => nft.owner === address
           );
           console.log("My NFTs:", myNfts);
           setAvailableNfts(myNfts);
@@ -161,6 +250,58 @@ function App() {
       console.error("Expected data to be an array, but got:", data);
     }
   };
+
+  const TokenCard = ({
+    token,
+    isTrending = false,
+  }: {
+    token: AgentTokens;
+    isTrending?: boolean;
+  }) => (
+    <div className="bg-gray-800 rounded-xl overflow-hidden border-2 border-purple-500/30 hover:border-purple-500 transform transition-all duration-300 hover:scale-105">
+      <div className="p-6">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-xl font-bold text-white">{token.name}</h3>
+            <p className="text-gray-400">{token.symbol}</p>
+          </div>
+          {isTrending && (
+            <div className="flex items-center text-green-400">
+              <TrendingUp size={16} className="mr-1" />
+              <span className="text-sm">Trending</span>
+            </div>
+          )}
+        </div>
+        <p className="text-gray-300 mb-4">{token.lore}</p>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <Coins size={16} className="text-purple-400 mr-2" />
+            <span className="text-white">{token.price} ETH</span>
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => handleBuyToken(token)}
+              className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg flex items-center"
+            >
+              <ShoppingCart size={16} className="mr-2" />
+              Buy
+            </button>
+            <button
+              onClick={() => handleSellToken(token)}
+              className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg flex items-center"
+            >
+              <Tag size={16} className="mr-2" />
+              Sell
+            </button>
+          </div>
+        </div>
+        <div className="text-sm text-gray-400">
+          Contract: {token.contractAddress.slice(0, 6)}...
+          {token.contractAddress.slice(-4)}
+        </div>
+      </div>
+    </div>
+  );
 
   useEffect(() => {
     console.log("Getting active subscribers for NFT:", selectedNft);
@@ -227,7 +368,7 @@ function App() {
         abi: tokenAbi,
         address: tokenAddress,
         functionName: "burnAiT",
-        args: [tokensToBurn],
+        args: [parseEther(tokensToBurn.toString())],
       });
     } catch (error) {
       console.error("Error burning AiT:", error);
@@ -296,11 +437,39 @@ function App() {
           <h1 className="text-4xl font-bold text-white mb-2 text-center">
             NFT Token Launch Platform
           </h1>
+          <h2 className="text-3xl font-bold text-white mb-6">
+            My Agent Tokens
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {userAgentTokens? userAgentTokens.map((token) => (
+              <TokenCard key={token.contractAddress} token={token} />
+            ))
+          :
+          <p className="text-gray-300 text-center mb-12">
+            You have not deployed any Agent Tokens yet
+            </p>}
+          </div>
+
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Trending Agent Tokens
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {allAgentTokens.map((token) => (
+              <TokenCard
+                key={token.contractAddress}
+                token={token}
+                isTrending={true}
+              />
+            ))}
+          </div>
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Launch Your Own AI Agent Token
+          </h2>
           <p className="text-gray-300 text-center mb-12">
             Select an NFT to launch your token
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-6">
             {availableNfts.map((nft) => (
               <div
                 key={nft.tokenId}
@@ -328,7 +497,7 @@ function App() {
               </div>
             ))}
           </div>
-
+          
           {/* Token Launch Modal */}
           {isModalOpen && (
             <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
@@ -522,6 +691,7 @@ function App() {
               </div>
             </div>
           )}
+
           {isConfirmationModalOpen && (
             <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
               <div className="bg-gray-800 rounded-2xl w-full max-w-lg p-6 text-center">
