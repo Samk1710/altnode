@@ -43,6 +43,9 @@ contract AltTokens is ERC20 {
     // Private mapping from token ID to asset URI
     mapping(uint256 => string) private tokenIdToAssetURI;
 
+    // Public mapping of owner address to list of erc20 token contracts
+    mapping(address => address[]) public ownerToErc20Tokens;
+
     /* Events */
     event TokenMinted(
         address indexed to,
@@ -92,9 +95,18 @@ contract AltTokens is ERC20 {
         emit TokensPurchased(msg.sender, msg.value, tokenAmount);
     }
 
-    function burnAiT(uint256 amt) external {
+    function burnAiT(uint256 amt, address contractAddress) external {
         require(balanceOf(msg.sender) >= amt, "Insufficient AiT balance.");
+        ownerToErc20Tokens[msg.sender].push(contractAddress);
         _burn(msg.sender, amt);
         emit TokensBurned(msg.sender, amt);
+    }
+
+    function getContracts(address ownerAddress)
+        external
+        view
+        returns (address[] memory)
+    {
+        return ownerToErc20Tokens[ownerAddress];
     }
 }
