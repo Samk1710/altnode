@@ -64,6 +64,8 @@ contract AltTokens is ERC20 {
         uint256 tokenAmount
     );
 
+    event TokensBurned(address indexed burner, uint256 tokenAmount);
+
     constructor() ERC20("Altnode", "AiT") {
         tokenId = 0;
         owner = msg.sender;
@@ -83,10 +85,16 @@ contract AltTokens is ERC20 {
     }
 
     function buyAiT() external payable {
-        uint256 exchangeRate = 100;
+        uint256 exchangeRate = 1000000;
         require(msg.value > 0, "Must send ETH to purchase AiT.");
         uint256 tokenAmount = msg.value * exchangeRate;
         _mint(msg.sender, tokenAmount);
         emit TokensPurchased(msg.sender, msg.value, tokenAmount);
+    }
+
+    function burnAiT(uint256 amt) external {
+        require(balanceOf(msg.sender) >= amt, "Insufficient AiT balance.");
+        _burn(msg.sender, amt);
+        emit TokensBurned(msg.sender, amt);
     }
 }
