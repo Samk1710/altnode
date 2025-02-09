@@ -10,11 +10,25 @@ import {
   Plus,
   Percent,
 } from "lucide-react";
-import { useReadContract, useDeployContract, usePublicClient } from "wagmi";
+import {
+  useReadContract,
+  useDeployContract,
+  usePublicClient,
+  useWriteContract,
+} from "wagmi";
 import { useAccount } from "wagmi";
-import { abi, bytecode, contractAddress, launcherAbi } from "../abi";
+import {
+  abi,
+  bytecode,
+  contractAddress,
+  launcherAbi,
+  tokenAbi,
+  tokenAddress,
+} from "../abi";
 import Navbar from "@/components/functions/NavBar";
 import { PinataSDK } from "pinata-web3";
+
+const BURN_CONSTANT = 1000;
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT,
@@ -28,6 +42,14 @@ interface TokenFormData {
   lore: string;
   airdropPercentage: string;
   airdropAddresses: string[];
+}
+
+interface AgentTokens {
+  contractAddress: string;
+  name: string;
+  symbol: string;
+  lore: string;
+  price: number;
 }
 
 interface NFT {
@@ -59,8 +81,15 @@ function App() {
     address: contractAddress,
     abi: abi,
     functionName: "getActiveSubscribers",
-    args: [0],
+    args: [selectedNft],
   });
+  // const { data: tokenData, refetch: refetchToken } = useReadContract({
+  //   address: tokenAddress,
+  //   abi: tokenAbi,
+  //   functionName: "burnAiT",
+  //   args: [],
+  // });
+  const { writeContractAsync } = useWriteContract();
   const { deployContractAsync } = useDeployContract();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [availableNfts, setAvailableNfts] = useState<NFT[]>([]);
@@ -72,6 +101,8 @@ function App() {
     airdropPercentage: "",
     airdropAddresses: [],
   });
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [isDeployed, setIsDeployed] = useState(false);
   const [activeSubscribers, setActiveSubscribers] = useState<string[]>([]);
   const [numSubs, setNumSubs] = useState(0);
   const [deployedContractAddress, setDeployedContractAddress] = useState("");
@@ -175,6 +206,7 @@ function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsDeploying(true);
     console.log("Deploying contract...");
 
     const lore = await pinata.upload.json({ lore: formData.lore });
@@ -188,7 +220,21 @@ function App() {
       [...formData.airdropAddresses, ...activeSubscribers],
       formData.airdropPercentage,
     ];
-    console.log("Args:", args);
+    const tokensToBurn =
+      Number(formData.initialSupply) * (Number(numSubs) / BURN_CONSTANT);
+    try {
+      writeContractAsync({
+        abi: tokenAbi,
+        address: tokenAddress,
+        functionName: "burnAiT",
+        args: [tokensToBurn],
+      });
+    } catch (error) {
+      console.error("Error burning AiT:", error);
+      setIsDeploying(false);
+      setIsDeployed(false);
+      return;
+    }
     const txHash = await deployContractAsync({
       abi: launcherAbi,
       bytecode: bytecode as `0x${string}`,
@@ -208,6 +254,20 @@ function App() {
         if (receipt.contractAddress) {
           console.log("Deployed Contract Address:", receipt.contractAddress);
           setDeployedContractAddress(receipt.contractAddress);
+          try {
+            await writeContractAsync({
+              abi: tokenAbi,
+              address: tokenAddress,
+              functionName: "setContract",
+              args: [receipt.contractAddress],
+            });
+            setIsDeployed(true);
+            setIsDeploying(false);
+          } catch (error) {
+            console.error("Error setting contract address:", error);
+            setIsDeployed(false);
+            setIsDeploying(false);
+          }
           setIsConfirmationModalOpen(true);
         }
       } catch (error) {
@@ -342,6 +402,13 @@ function App() {
                         className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="Enter initial supply"
                       />
+                      {Number(formData.initialSupply) > 0 && numSubs > 0 && (
+                        <p className="text-sm text-gray-400 mt-2">
+                          {Number(formData.initialSupply) *
+                            (Number(numSubs) / BURN_CONSTANT)}{" "}
+                          AiT will be burned
+                        </p>
+                      )}
                     </div>
 
                     <div>
