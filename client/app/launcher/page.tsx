@@ -707,15 +707,15 @@ function App() {
                   </code>
                 </div>
                 <p className="text-gray-300 mb-4">
-                  View your token contract on Sepolia BaseScan:
+                  View your token contract on Sepolia ArbiScan:
                 </p>
                 <a
-                  href={`https://sepolia.basescan.org/address/${deployedContractAddress}`}
+                  href={`https://sepolia.arbiscan.io/address/${deployedContractAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 mb-4"
                 >
-                  View on BaseScan
+                  View on ArbiScan
                 </a>
                 <button
                   onClick={() => setIsConfirmationModalOpen(false)}
