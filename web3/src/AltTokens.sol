@@ -95,11 +95,14 @@ contract AltTokens is ERC20 {
         emit TokensPurchased(msg.sender, msg.value, tokenAmount);
     }
 
-    function burnAiT(uint256 amt, address contractAddress) external {
+    function burnAiT(uint256 amt) external {
         require(balanceOf(msg.sender) >= amt, "Insufficient AiT balance.");
-        ownerToErc20Tokens[msg.sender].push(contractAddress);
         _burn(msg.sender, amt);
         emit TokensBurned(msg.sender, amt);
+    }
+
+    function setContract(address erc20Token) external {
+        ownerToErc20Tokens[msg.sender].push(erc20Token);
     }
 
     function getContracts(address ownerAddress)
