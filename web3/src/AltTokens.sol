@@ -26,41 +26,12 @@ contract AltTokens is ERC20 {
     uint256 private tokenId;
     address public owner;
 
-    struct Subscription {
-        uint256 validity; // Timestamp of subscription expiry
-        bytes32 accessKey; // Unique access key
-    }
-
-    // Mapping from token ID to subscriber address to subscription details
-    mapping(uint256 => mapping(address => Subscription)) public subscriptions;
-
-    // Mapping from token ID to subscription price
-    mapping(uint256 => uint256) public subscriptionPrices;
-
-    // Mapping from access key to token ID
-    mapping(bytes32 => uint256) private accessKeyToTokenId;
-
-    // Private mapping from token ID to asset URI
-    mapping(uint256 => string) private tokenIdToAssetURI;
-
     // Public mapping of owner address to list of erc20 token contracts
     mapping(address => address[]) public ownerToErc20Tokens;
 
-    /* Events */
-    event TokenMinted(
-        address indexed to,
-        uint256 tokenId,
-        string tokenMetadata,
-        uint256 price
-    );
+    address[] public erc20Tokens;
 
-    event SubscriptionPurchased(
-        address indexed subscriber,
-        uint256 tokenId,
-        uint256 validity,
-        bytes32 accessKey,
-        uint256 price
-    );
+    /* Events */
     event TokensPurchased(
         address indexed buyer,
         uint256 ethAmount,
@@ -103,6 +74,7 @@ contract AltTokens is ERC20 {
 
     function setContract(address erc20Token) external {
         ownerToErc20Tokens[msg.sender].push(erc20Token);
+        erc20Tokens.push(erc20Token);
     }
 
     function getContracts(address ownerAddress)
