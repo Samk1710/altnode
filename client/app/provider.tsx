@@ -34,7 +34,7 @@ export default function Providers({
                             privacyUrl: 'https://...',
                         },
                     }}
-                    chain={arbitrumSepolia}
+                    chain={baseSepolia}
                 >
                     {children}
                 </OnchainKitProvider>
