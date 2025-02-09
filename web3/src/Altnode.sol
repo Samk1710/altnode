@@ -276,7 +276,7 @@ contract Altnode is ERC721URIStorage {
         uint256 activeCount = 0;
 
         // Populate the JSON with active subscriptions
-        for (uint256 i = 0; i < subscriptionCount; i++) {
+        for (uint256 i = 0; i <= subscriptionCount; i++) {
             if (subscriptions[i][subscriber].validity > block.timestamp) {
                 if (activeCount > 0) {
                     json = string(abi.encodePacked(json, ","));
