@@ -15,6 +15,7 @@ export default function Navbar() {
     { name: "Launchpad", href: "/launcher" },
     { name: "Marketplace", href: "/nfts" },
     { name: "About", href: "/about" },
+    { name: "Buy AiT", href: "/swap" }
   ]
 
   const toggleMenu = () => {
