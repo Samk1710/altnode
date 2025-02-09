@@ -54,7 +54,7 @@ function Dashboard() {
     confirmError,
   } = usePurchaseSubscription();
 
-  const { data: subscriptionsData } = useReadContract({
+  const { data: subscriptionsData, refetch: refetchSubs } = useReadContract({
     address: contractAddress,
     abi: abi,
     functionName: "getSubscriptions",
@@ -157,6 +157,7 @@ function Dashboard() {
     let interval: any;
 
     if (activeTab === "my-subscriptions" && subscriptionsData) {
+      refetchSubs();
       fetchSubscriptions();
     } else if (activeTab === "marketplace" && data) {
       interval = fetchMarketplaceData();
