@@ -5,7 +5,6 @@ pragma solidity ^0.8.19;
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-
 // import {AltTokens} from "./AltTokens.sol";
 
 /**
@@ -45,6 +44,11 @@ contract Altnode is ERC721URIStorage {
 
     // Private mapping from token ID to asset URI
     mapping(uint256 => string) private tokenIdToAssetURI;
+
+    // Add new mapping to track subscribers for each asset
+    mapping(uint256 => address[]) private assetSubscribers;
+    // Add mapping to track if an address is already a subscriber to prevent duplicates
+    mapping(uint256 => mapping(address => bool)) private isSubscriber;
 
     /* Events */
     event TokenMinted(
@@ -161,6 +165,12 @@ contract Altnode is ERC721URIStorage {
             accessKey: accessKey
         });
 
+        // Add subscriber to tracking if not already present
+        if (!isSubscriber[assetId][msg.sender]) {
+            assetSubscribers[assetId].push(msg.sender);
+            isSubscriber[assetId][msg.sender] = true;
+        }
+
         // Map the access key to the token ID
         accessKeyToTokenId[accessKey] = assetId;
 
@@ -190,7 +200,7 @@ contract Altnode is ERC721URIStorage {
     /**
      * @dev Get all active subscribers for a specific asset
      * @param assetId The ID of the asset
-     * @return subscribers Array of addresses with active subscriptions
+     * @return activeSubscribers Array of addresses with active subscriptions
      */
     function getActiveSubscribers(
         uint256 assetId
@@ -199,26 +209,29 @@ contract Altnode is ERC721URIStorage {
             revert Altnode__InvalidAssetId(assetId);
         }
 
-        // First, count the number of active subscribers
+        // Get total number of subscribers for this asset
+        uint256 totalSubscribers = assetSubscribers[assetId].length;
+        
+        // Count active subscribers first
         uint256 activeCount = 0;
-        address[] memory tempSubscribers = new address[](2 ** 16); // Temporary array with maximum possible size
-
-        // Get active subscribers
-        for (uint160 i = 0; i < 2 ** 160; i++) {
-            address subscriber = address(i);
-            if (
-                subscriptions[assetId][subscriber].validity >= block.timestamp
-            ) {
-                tempSubscribers[activeCount] = subscriber;
+        for (uint256 i = 0; i < totalSubscribers; i++) {
+            address subscriber = assetSubscribers[assetId][i];
+            if (subscriptions[assetId][subscriber].validity >= block.timestamp) {
                 activeCount++;
             }
-            if (activeCount >= 2 ** 16) break; // Safety check to prevent overflow
         }
 
-        // Create final array with exact size
+        // Create array for active subscribers
         address[] memory activeSubscribers = new address[](activeCount);
-        for (uint256 i = 0; i < activeCount; i++) {
-            activeSubscribers[i] = tempSubscribers[i];
+        
+        // Fill array with active subscribers
+        uint256 currentIndex = 0;
+        for (uint256 i = 0; i < totalSubscribers && currentIndex < activeCount; i++) {
+            address subscriber = assetSubscribers[assetId][i];
+            if (subscriptions[assetId][subscriber].validity >= block.timestamp) {
+                activeSubscribers[currentIndex] = subscriber;
+                currentIndex++;
+            }
         }
 
         return activeSubscribers;
@@ -234,7 +247,7 @@ contract Altnode is ERC721URIStorage {
         uint256 totalAssets = tokenId; // Total number of minted tokens
         string memory json = "[";
 
-        for (uint256 i = 0; i < totalAssets; i++) {
+        for (uint256 i = 0; i <= totalAssets; i++) {
             string memory asset = string(
                 abi.encodePacked(
                     '{"tokenId": ',
@@ -276,7 +289,7 @@ contract Altnode is ERC721URIStorage {
         uint256 activeCount = 0;
 
         // Populate the JSON with active subscriptions
-        for (uint256 i = 0; i <= subscriptionCount; i++) {
+        for (uint256 i = 0; i < subscriptionCount; i++) {
             if (subscriptions[i][subscriber].validity > block.timestamp) {
                 if (activeCount > 0) {
                     json = string(abi.encodePacked(json, ","));
@@ -322,9 +335,7 @@ contract Altnode is ERC721URIStorage {
     ) external view returns (string memory) {
         uint256 assetId = accessKeyToTokenId[accessKey];
 
-        if (
-            assetId < 0 || assetId > tokenId || ownerOf(assetId) == address(0)
-        ) {
+        if (assetId < 0 || assetId > tokenId || ownerOf(assetId) == address(0)) {
             revert Altnode__InvalidAccessKey();
         }
 
@@ -347,9 +358,7 @@ contract Altnode is ERC721URIStorage {
     ) external view returns (string memory) {
         uint256 assetId = accessKeyToTokenId[accessKey];
 
-        if (
-            assetId < 0 || assetId > tokenId || ownerOf(assetId) == address(0)
-        ) {
+        if (assetId < 0 || assetId > tokenId || ownerOf(assetId) == address(0)) {
             revert Altnode__InvalidAccessKey();
         }
 
