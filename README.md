@@ -5,7 +5,7 @@ AITnode is a next-generation AI and Web3 platform that enables users to build, o
 ---
 
 ## DEMO: [VIDEO LINK](https://youtu.be/nidUFZctvo0) [P.S.: Please watch this instead of the project video on ETHGlobal Website, as we ran into some last minute video compression glitches]
-
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nidUFZctvo0?si=lKdX9lV-ZYI554_Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## 🚀 Features
