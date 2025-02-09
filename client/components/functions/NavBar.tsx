@@ -9,8 +9,9 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { name: "Create Prompt", href: "/ide" },
+    { name: "Build Agent", href: "/ide" },
     { name: "Submit Dataset", href: "/upload" },
+    { name: "Launchpad", href: "/launcher" },
     { name: "Marketplace", href: "/nfts" },
     { name: "About", href: "/about" },
   ];

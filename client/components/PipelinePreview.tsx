@@ -102,7 +102,7 @@ export default function PipelinePreview({
       <div className="mb-6 space-y-4">
         <Input
           type="text"
-          placeholder="Pipeline Name"
+          placeholder="Agent Name"
           className="w-full"
           onChange={(e) => setName(e.target.value)}
         />
@@ -197,7 +197,7 @@ export default function PipelinePreview({
         onDone={() => setUploadState("idle")}
       />
 
-      <h1 className="text-3xl font-semibold mb-4 text-secondary">Pipeline Docs</h1>
+      <h1 className="text-3xl font-semibold mb-4 text-secondary">Agent Docs</h1>
       
       {/* Rest of the existing PipelinePreview component */}
       <h1 className="text-xl font-semibold mb-4 text-secondary">README.md</h1>
