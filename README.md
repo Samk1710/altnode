@@ -1,6 +1,6 @@
 # AITnode: Decentralized AI Agent Marketplace
 
-AITnode is a next-generation AI and Web3 platform that enables users to build, own, and monetize AI agents as NFTs on the Flow blockchain. This README provides an in-depth look at the architecture, tech stack, and implementation details.
+AITnode is a next-generation AI and Web3 platform that enables users to build, own, and monetize AI agents as NFTs on the Arbitrum blockchain. This README provides an in-depth look at the architecture, tech stack, and implementation details.
 
 ---
 
