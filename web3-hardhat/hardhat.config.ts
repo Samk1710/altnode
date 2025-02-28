@@ -3,7 +3,7 @@ import "dotenv/config";
 import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-verify";
 
-const { RPC_URL_ETH, RPC_URL_BASE, RPC_URL_AMOY, PRIVATE_KEY, ETHERSCAN_API, POLYGONSCAN_API, BASESCAN_API } = process.env;
+const { RPC_URL_BASE, PRIVATE_KEY, BASESCAN_API_KEY, SONICSCAN_API_KEY } = process.env;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.24",
@@ -26,17 +26,17 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      'sonic': "I24DBHGKGXGIIYX96DEH5KEJG8NXSUWKU8",
-      'sonicTestnet': "I24DBHGKGXGIIYX96DEH5KEJG8NXSUWKU8",
-      'base-sepolia': `${BASESCAN_API}`,
+      'sonic': `${SONICSCAN_API_KEY}`,
+      'sonicTestnet': `${SONICSCAN_API_KEY}`,
+      'base-sepolia': `${BASESCAN_API_KEY}`,
     },
     customChains: [
       {
         network: "base-sepolia",
         chainId: 84532,
         urls: {
-          apiURL: "https://base-sepolia.blockscout.com/api",
-          browserURL: "https://base-sepolia.blockscout.com",
+          apiURL: "https://api-sepolia.basescan.org/api",
+          browserURL: "https://sepolia.basescan.org",
         },
       },
       {

@@ -17,4 +17,4 @@ deploy-accessControl:
 	npx hardhat run ignition/modules/AccessControl.ts --network baseSepolia
 
 verify-accessControl:
-	npx hardhat verify --network baseSepolia 0xe8c1111f516a8Ef6427d8b5250e4042354A912B0
+	npx hardhat verify --network baseSepolia 0x438E8847Eff0AB47b4a626B5Bb4F4e28b85cb0e1
