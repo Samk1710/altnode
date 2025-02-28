@@ -17,14 +17,28 @@ const config: HardhatUserConfig = {
       url: "https://rpc.blaze.soniclabs.com",
       chainId: 57054,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
-    }
+    },
+    baseSepolia: {
+      url: RPC_URL_BASE,
+      chainId: 84532,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+    },
   },
   etherscan: {
     apiKey: {
-      sonic: "I24DBHGKGXGIIYX96DEH5KEJG8NXSUWKU8",
-      sonicTestnet: "I24DBHGKGXGIIYX96DEH5KEJG8NXSUWKU8"
+      'sonic': "I24DBHGKGXGIIYX96DEH5KEJG8NXSUWKU8",
+      'sonicTestnet': "I24DBHGKGXGIIYX96DEH5KEJG8NXSUWKU8",
+      'base-sepolia': `${BASESCAN_API}`,
     },
     customChains: [
+      {
+        network: "base-sepolia",
+        chainId: 84532,
+        urls: {
+          apiURL: "https://base-sepolia.blockscout.com/api",
+          browserURL: "https://base-sepolia.blockscout.com",
+        },
+      },
       {
         network: "sonic",
         chainId: 146,

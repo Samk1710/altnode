@@ -247,7 +247,7 @@ contract Altnode is ERC721URIStorage {
         uint256 totalAssets = tokenId; // Total number of minted tokens
         string memory json = "[";
 
-        for (uint256 i = 0; i <= totalAssets; i++) {
+        for (uint256 i = 0; i < totalAssets; i++) {
             string memory asset = string(
                 abi.encodePacked(
                     '{"tokenId": ',
@@ -278,7 +278,7 @@ contract Altnode is ERC721URIStorage {
         uint256 copyofTokenId = tokenId;
 
         // First, count the number of active subscriptions for the subscriber
-        for (uint256 i = 0; i <= copyofTokenId; i++) {
+        for (uint256 i = 0; i < copyofTokenId; i++) {
             if (subscriptions[i][subscriber].validity > block.timestamp) {
                 subscriptionCount++;
             }

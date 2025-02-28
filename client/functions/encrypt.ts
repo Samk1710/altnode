@@ -1,12 +1,12 @@
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { encryptString } from "@lit-protocol/encryption";
 import { LIT_NETWORK } from "@lit-protocol/constants";
-import { contractAddress } from "@/app/abi";
+import { accessControAddress } from "@/app/abi";
 
 const chain = "baseSepolia";
 const accessControlConditions = [
     {
-        contractAddress: contractAddress,
+        contractAddress: accessControAddress,
         standardContractType: "ERC721", // Specify the correct contract type
         chain: "baseSepolia",
         method: "balanceOf", // Or the appropriate method

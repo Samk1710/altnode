@@ -1,10 +1,17 @@
 POST http://localhost:3000/api/getResponse
 {
     "model": "meta-llama/Meta-Llama-3-70B-Instruct-Turbo",
-    "pipeKey": "0x4b81ba199c140c65de3741fcf618bb80987a6588edcf35d3058c704a3f41b01b",
-    "address": "0x2F8110491E604ADCBdF50F5f100CDd46FFbeb344",
+    "pipeKey": "0x7e8e22f4ea61c471713b66fbdf3bb1184b2ab0d22b816fe5e8fc9db5218df0f8",
+    "address": "0xa8bf966B94029F581130C06e57c55B36280426b6",
     "inputJson": {
         "query": "Deepseek",
         "question": "what is the latest news about deepseek?"
     }
 }
+
+HTTP/1.1 500  - Internal Server Error
+vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch
+content-type: application/json
+date: Fri, 28 Feb 2025 21:28:36 GMT
+connection: close
+transfer-encoding: chunked
