@@ -1,10 +1,17 @@
 # AITnode: Decentralized AI Agent Marketplace
 
-AITnode is a next-generation AI and Web3 platform that enables users to build, own, and monetize AI agents as NFTs on the Flow blockchain. This README provides an in-depth look at the architecture, tech stack, and implementation details.
+AITnode is a next-generation AI and Web3 platform that enables users to build, own, and monetize AI agents as NFTs on the Arbitrum blockchain. This README provides an in-depth look at the architecture, tech stack, and implementation details.
 
 ---
 
 ## DEMO: [VIDEO LINK](https://youtu.be/nidUFZctvo0)
+
+---
+
+## 📜 Contract Addresses
+
+- **AITnode Contract**: `0xAbDC401C15720439ED2B5a9ea59fA5751b0Fbc5A` ([View on Block Explorer](https://sepolia.arbiscan.io/address/0xabdc401c15720439ed2b5a9ea59fa5751b0fbc5a))
+- **AITToken Contract**: `0x60B543d0835f879F8F7D721Ba45BBb809Bba4a19` ([View on Block Explorer](https://sepolia.arbiscan.io/address/0x60b543d0835f879f8f7d721ba45bbb809bba4a19))
 
 ---
 
@@ -128,4 +135,3 @@ MIT License. See `LICENSE` for details.
 ---
 
 ### 💡 Built with Web3, AI, and 💙 for Decentralization!
-
