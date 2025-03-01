@@ -5,7 +5,7 @@ deploy:
 	npx hardhat run ignition/modules/AltNode.ts --network sonicTestnet
 
 verify:
-	npx hardhat verify --network sonicTestnet 0x9d0e07732Bc3db8DD91110aA970abC26B11D0DF8
+	npx hardhat verify --network sonicTestnet 0x6a87E98E2AE1d6cbA3699a6792f4CC561Cc000aD
 
 deploy-token:
 	npx hardhat run ignition/modules/token.ts --network sonicTestnet

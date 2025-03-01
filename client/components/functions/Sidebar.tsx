@@ -11,10 +11,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 const llmOptions = {
-  "Meta Llama 3.1 70B Instruct Turbo": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
-  "Meta Llama 3 70B Instruct Turbo": "meta-llama/Meta-Llama-3-70B-Instruct-Turbo",
-  "Meta Llama 3 8B Instruct Turbo": "meta-llama/Meta-Llama-3-8B-Instruct-Turbo",
-  "Meta Llama 3.1 8B Instruct Turbo": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"
+  "Meta Llama 3.1 70B Instruct Turbo": "llama-3-1-70b",
+  "Meta Llama 3.1 8B Instruct Turbo": "llama-3-1-8b"
 }
 
 const moduleSnippets = {

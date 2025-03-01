@@ -364,7 +364,7 @@ function App() {
     const tokensToBurn =
       Number(formData.initialSupply) * (Number(numSubs) / BURN_CONSTANT);
     try {
-      writeContractAsync({
+      await writeContractAsync({
         abi: tokenAbi,
         address: tokenAddress,
         functionName: "burnAiT",
@@ -441,13 +441,13 @@ function App() {
             My Agent Tokens
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {userAgentTokens? userAgentTokens.map((token) => (
+            {userAgentTokens ? userAgentTokens.map((token) => (
               <TokenCard key={token.contractAddress} token={token} />
             ))
-          :
-          <p className="text-gray-300 text-center mb-12">
-            You have not deployed any Agent Tokens yet
-            </p>}
+              :
+              <p className="text-gray-300 text-center mb-12">
+                You have not deployed any Agent Tokens yet
+              </p>}
           </div>
 
           <h2 className="text-3xl font-bold text-white mb-6">
@@ -497,7 +497,7 @@ function App() {
               </div>
             ))}
           </div>
-          
+
           {/* Token Launch Modal */}
           {isModalOpen && (
             <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">

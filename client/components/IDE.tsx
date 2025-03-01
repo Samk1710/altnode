@@ -79,7 +79,7 @@ def run(input_json, context=None):
     return example_output
     `);
   const [selectedLLM, setSelectedLLM] = useState(
-    "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+    "llama-3-1-70b"
   );
   const [llmParams, setLLMParams] = useState({
     temperature: 0.7,
@@ -134,6 +134,8 @@ def run(input_json, context=None):
   };
 
   const handleRun = async (): Promise<void> => {
+    console.log('Running code');
+    console.log(await generatePythonScript(code));
     const response = await fetch("/api/run", {
       method: "POST",
       headers: {
@@ -167,7 +169,7 @@ def run(input_json, context=None):
   }
 
   const testTwo = async (): Promise<boolean> => {
-    console.log(await JSON.stringify({
+    console.log(JSON.stringify({
       model: selectedLLM,
       inputJson: testInput,
       script: await generatePythonScript(code),

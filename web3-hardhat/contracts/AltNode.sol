@@ -276,21 +276,25 @@ contract Altnode is ERC721URIStorage {
     ) external view returns (string memory) {
         uint256 subscriptionCount = 0;
         uint256 copyofTokenId = tokenId;
+        uint256[] memory subscribedTokenId = new uint256[](copyofTokenId);
+        uint256 activeCount = 0;
 
         // First, count the number of active subscriptions for the subscriber
         for (uint256 i = 0; i < copyofTokenId; i++) {
             if (subscriptions[i][subscriber].validity > block.timestamp) {
+                subscribedTokenId[activeCount] = i;
+                activeCount++;
                 subscriptionCount++;
             }
         }
 
         // Build the JSON string
         string memory json = "[";
-        uint256 activeCount = 0;
-
+        activeCount = 0;
         // Populate the JSON with active subscriptions
         for (uint256 i = 0; i < subscriptionCount; i++) {
-            if (subscriptions[i][subscriber].validity > block.timestamp) {
+            uint256 tkId = subscribedTokenId[i];
+            if (subscriptions[tkId][subscriber].validity > block.timestamp) {
                 if (activeCount > 0) {
                     json = string(abi.encodePacked(json, ","));
                 }
@@ -299,18 +303,18 @@ contract Altnode is ERC721URIStorage {
                     abi.encodePacked(
                         "{",
                         '"tokenId":',
-                        Strings.toString(i),
+                        Strings.toString(tkId),
                         ",",
                         '"tokenUri":"',
-                        tokenURI(i),
+                        tokenURI(tkId),
                         '",',
                         '"accessKey":"',
                         Strings.toHexString(
-                            uint256(subscriptions[i][subscriber].accessKey)
+                            uint256(subscriptions[tkId][subscriber].accessKey)
                         ),
                         '",',
                         '"validity":',
-                        Strings.toString(subscriptions[i][subscriber].validity),
+                        Strings.toString(subscriptions[tkId][subscriber].validity),
                         "}"
                     )
                 );

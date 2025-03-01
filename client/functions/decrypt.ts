@@ -11,21 +11,27 @@ import {
     createSiweMessageWithRecaps,
     generateAuthSig,
 } from "@lit-protocol/auth-helpers";
+import "dotenv/config";
 
+const PUBLIC_KEY=process.env.PUBLIC_KEY as string
 const chain = "baseSepolia";
 const accessControlConditions = [
     {
-        contractAddress: accessControAddress,
-        standardContractType: "ERC721", // Specify the correct contract type
-        chain: "baseSepolia",
-        method: "balanceOf", // Or the appropriate method
-        parameters: [":userAddress"],
+        contractAddress: '',
+        standardContractType: '',
+        chain,
+        method: '',
+        parameters: [
+            ':userAddress',
+        ],
         returnValueTest: {
-            comparator: ">=",
-            value: "0", // Example condition
-        },
-    },
-];
+            comparator: '=',
+            value: PUBLIC_KEY,
+        }
+    }
+]
+
+console.log(accessControlConditions);
 
 async function getSessionSignatures() {
     const PRIVATE_KEY = process.env.PRIVATE_KEY as string;

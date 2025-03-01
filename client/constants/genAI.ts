@@ -1,11 +1,11 @@
 
 export const generate = async (
     query: string,
-    model: string = "meta-llama/Meta-Llama-3-8B-Instruct-Turbo",
+    model: string = "llama-3-1-70b",
     systemPrompt?: string,
     context?: { role: string; content: string }[]
 ): Promise<string> => {
-    const BEYOND_API_URL = process.env.NEXT_PUBLIC_BEYOND_BASE_URL + "/api/chat/completions";
+    const CORCEL_API_URL = process.env.NEXT_PUBLIC_CORCEL_BASE_URL + "/text/vision/chat";
 
     const messages: { role: string; content: string }[] = [];
 
@@ -19,16 +19,29 @@ export const generate = async (
 
     messages.push({ role: "user", content: query });
     const body = {
-        "model": model,
-        "messages": messages,
+        model: model,
+        temperature: 0.1,
+        max_tokens: 500,
+        messages: messages,
+        stream: false
     };
-    const response = await fetch(BEYOND_API_URL, {
-        method: "POST",
-        headers: new Headers([
-            ["x-api-key", process.env.NEXT_PUBLIC_BEYOND_API_KEY || ""],
-            ["Content-Type", "application/json"],
-        ]),
-        body: JSON.stringify(body),
+    // const response = await fetch(CORCEL_API_URL, {
+    //     method: "POST",
+    //     headers: new Headers([
+    //         ["x-api-key", process.env.NEXT_PUBLIC_BEYOND_API_KEY || ""],
+    //         ["Content-Type", "application/json"],
+    //     ]),
+    //     body: JSON.stringify(body),
+    // });
+
+    const response = await fetch(CORCEL_API_URL, {
+        method: 'POST',
+        headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+            Authorization: `${process.env.NEXT_PUBLIC_CORCEL_API_KEY}`,
+        },
+        body: JSON.stringify(body)
     });
 
     if (!response.ok) {
@@ -40,7 +53,7 @@ export const generate = async (
 
 
 export const generateCreature = async (entityType: string, rarity: string): Promise<Blob | null> => {
-    const BEYOND_API_URL = process.env.NEXT_PUBLIC_BEYOND_BASE_URL + "/api/images/generate";
+    const CORCEL_API_URL = process.env.NEXT_PUBLIC_CORCEL_BASE_URL + "/image/vision/text-to-image";
 
     const entityStyles: Record<string, any> = {
         engine: {
@@ -108,30 +121,47 @@ export const generateCreature = async (entityType: string, rarity: string): Prom
     const prompt = `A completely ${theme} depiction of a ${rarity} ${entityType}, featuring a ${details.size} structure with ${details.traits}. It has ${details.style}, and its unique coloration includes ${color}. This design embodies the essence of a ${rarity} ${entityType} representing efficiency, creativity, refinement, and elegance.`;
 
     try {
-        const response = await fetch(BEYOND_API_URL, {
-            method: "POST",
-            headers: new Headers([
-                ["x-api-key", process.env.NEXT_PUBLIC_BEYOND_API_KEY || ""],
-                ["Content-Type", "application/json"],
-            ]),
+        // const response = await fetch(CORCEL_API_URL, {
+        //     method: "POST",
+        //     headers: new Headers([
+        //         ["x-api-key", process.env.NEXT_PUBLIC_BEYOND_API_KEY || ""],
+        //         ["Content-Type", "application/json"],
+        //     ]),
+        //     body: JSON.stringify({
+        //         "prompt": prompt,
+        //         "model": "black-forest-labs/FLUX.1-schnell",
+        //         "options": {
+        //             "steps": Math.floor(Math.random() * 8) + 4, // randomize steps between 4 and 11
+        //             "temperature": Math.random() * (0.8 - 0.6) + 0.6, // randomize temperature between 0.6 and 1
+        //             "cache": false,
+        //             "height": 512,
+        //             "width": 512,
+        //         }
+        //     }),
+        // });
+
+        const response = await fetch(CORCEL_API_URL, {
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'content-type': 'application/json',
+                Authorization: `${process.env.NEXT_PUBLIC_CORCEL_API_KEY}`,
+            },
             body: JSON.stringify({
-                "prompt": prompt,
-                "model": "black-forest-labs/FLUX.1-schnell",
-                "options": {
-                    "steps": Math.floor(Math.random() * 8) + 4, // randomize steps between 4 and 11
-                    "temperature": Math.random() * (0.8 - 0.6) + 0.6, // randomize temperature between 0.6 and 1
-                    "cache": false,
-                    "height": 512,
-                    "width": 512,
-                }
-            }),
+                cfg_scale: Math.floor(Math.random() * 3) + 2,
+                height: '1024',
+                width: '1024',
+                steps: Math.floor(Math.random() * 8) + 4,
+                engine: 'flux-schnell',
+                text_prompts: [{ text: prompt }],
+            })
         });
 
         if (!response.ok) {
             throw new Error(`Beyond API error: ${response.statusText}`);
         }
         const body = await response.json();
-        const url = process.env.NEXT_PUBLIC_BEYOND_BASE_URL + body.url;
+        const url = body.signed_urls[0];
 
 
         const blob = await fetch(url).then(res => res.blob());
@@ -211,7 +241,7 @@ ${outputJson}
 
 Your response must match the format above. Output only the JSON object with the generated Python script. Do not include any additional text.`;
 
-    const response = await generate(enhancedPrompt, "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo");
+    const response = await generate(enhancedPrompt, "llama-3-1-70b");
     // const res = JSON.parse(response);
     return response;
 }
@@ -219,7 +249,7 @@ Your response must match the format above. Output only the JSON object with the 
 export const generatePythonScript = async (
     script: string
 ): Promise<string> => {
-    const BEYOND_API_URL = process.env.NEXT_PUBLIC_BEYOND_BASE_URL + "/api/chat/completions";
+    const CORCEL_API_URL = process.env.NEXT_PUBLIC_CORCEL_BASE_URL + "/text/vision/chat";
     const pythonScript = `import json
 import requests
 
@@ -229,15 +259,17 @@ def generate(LLM: str, messages: list[dict[str, str]], params: dict=None) -> str
     """
     body = {
         "model": LLM,
-        "messages": messages
+        "messages": messages,
+        "stream": False,
     }
     response = requests.post(
-        url="${BEYOND_API_URL}",
+        url="${CORCEL_API_URL}",
         headers={
-            "x-api-key": "${process.env.NEXT_PUBLIC_BEYOND_API_KEY || ""}",
-            "Content-Type": "application/json",
+            "accept": "application/json",
+            "content-type": "application/json",
+            "Authorization": "${process.env.NEXT_PUBLIC_CORCEL_API_KEY}",
         },
-        data=json.dumps(body),
+        json=body,
     )
     if response.status_code != 200:
         return json.dumps({
@@ -245,7 +277,7 @@ def generate(LLM: str, messages: list[dict[str, str]], params: dict=None) -> str
             "reason": response.reason
         })
     response = response.json()
-    return json.dumps(response["choices"][0]["message"]["content"])
+    return response["choices"][0]["message"]["content"]
     
 ${script}
 `;

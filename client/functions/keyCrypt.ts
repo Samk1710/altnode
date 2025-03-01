@@ -69,15 +69,17 @@ def generate(LLM: str, messages: list[dict[str, str]], params: dict=None) -> str
     """
     body = {
         "model": LLM,
-        "messages": messages
+        "messages": messages,
+        "stream": False
     }
     response = requests.post(
-        url="${process.env.NEXT_PUBLIC_BEYOND_BASE_URL}/api/chat/completions",
+        url="${process.env.NEXT_PUBLIC_CORCEL_BASE_URL}/text/vision/chat",
         headers={
-            "x-api-key": "${process.env.NEXT_PUBLIC_BEYOND_API_KEY}",
-            "Content-Type": "application/json",
+            "accept": "application/json",
+            "content-type": "application/json",
+            "Authorization": "${process.env.NEXT_PUBLIC_CORCEL_API_KEY}",
         },
-        data=json.dumps(body),
+        json=body,
     )
     if response.status_code != 200:
         return json.dumps({
@@ -85,7 +87,7 @@ def generate(LLM: str, messages: list[dict[str, str]], params: dict=None) -> str
             "reason": response.reason
         })
     response = response.json()
-    return json.dumps(response["choices"][0]["message"]["content"])
+    return response["choices"][0]["message"]["content"]
     
 """
 Utilise the run function to define your agent pipeline

@@ -55,7 +55,7 @@ contract AccessControl {
     /**
      * @dev Returns the address of the current owner.
      */
-    function getOwner() public view returns (address) {
-        return owner;
+    function getOwner(address sender) public pure returns (address) {
+        return sender;
     }
 }
