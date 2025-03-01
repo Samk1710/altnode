@@ -3,7 +3,6 @@
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { decryptToString } from "@lit-protocol/encryption";
 import { LIT_NETWORK } from "@lit-protocol/constants";
-import { accessControAddress } from "@/app/abi";
 import { ethers } from "ethers";
 import { LIT_ABILITY } from "@lit-protocol/constants";
 import {
@@ -11,27 +10,9 @@ import {
     createSiweMessageWithRecaps,
     generateAuthSig,
 } from "@lit-protocol/auth-helpers";
-import "dotenv/config";
+import { accessControlConditions } from "./accesControlConditions";
 
-const PUBLIC_KEY=process.env.PUBLIC_KEY as string
 const chain = "baseSepolia";
-const accessControlConditions = [
-    {
-        contractAddress: '',
-        standardContractType: '',
-        chain,
-        method: '',
-        parameters: [
-            ':userAddress',
-        ],
-        returnValueTest: {
-            comparator: '=',
-            value: PUBLIC_KEY,
-        }
-    }
-]
-
-console.log(accessControlConditions);
 
 async function getSessionSignatures() {
     const PRIVATE_KEY = process.env.PRIVATE_KEY as string;

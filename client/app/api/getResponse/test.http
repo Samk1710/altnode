@@ -1,7 +1,7 @@
 POST http://localhost:3000/api/getResponse
 {
-    "model": "meta-llama/Meta-Llama-3-70B-Instruct-Turbo",
-    "pipeKey": "0x8e8621485a385a1904749494cbe08e4fb45e2576449237cfc4fe364986843639",
+    "model": "llama-3-1-70b",
+    "pipeKey": "0xecdcd9595e63e0dc0a33772cc231d50459a694ab7a874b7fbdd6e68ebb4fe792",
     "address": "0xa8bf966B94029F581130C06e57c55B36280426b6",
     "inputJson": {
         "query": "Deepseek",
@@ -9,9 +9,8 @@ POST http://localhost:3000/api/getResponse
     }
 }
 
-HTTP/1.1 200  - OK
+HTTP/1.1 500  - Internal Server Error
 vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch
-content-type: application/json
-date: Sat, 01 Mar 2025 21:47:33 GMT
+date: Sat, 01 Mar 2025 22:47:02 GMT
 connection: close
 transfer-encoding: chunked
